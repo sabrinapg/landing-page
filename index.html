@@ -5,63 +5,409 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>B2B FinTrack</title>
   <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
     body {
-      font-family: Arial, sans-serif;
-      background: #f4f7fa;
-      color: #333;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      overflow-x: hidden;
+      background: #0a0a0a;
+      color: #ffffff;
+    }
+
+    /* Parallax Container */
+    .parallax-container {
+      height: 100vh;
+      overflow-x: hidden;
+      overflow-y: auto;
+      perspective: 1px;
+    }
+
+    /* Background Layers */
+    .bg-layer {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+    }
+
+    .bg-stars {
+      background: 
+        radial-gradient(2px 2px at 20px 30px, #eee, transparent),
+        radial-gradient(2px 2px at 40px 70px, rgba(255,255,255,0.8), transparent),
+        radial-gradient(1px 1px at 90px 40px, #fff, transparent),
+        radial-gradient(1px 1px at 130px 80px, rgba(255,255,255,0.6), transparent),
+        radial-gradient(2px 2px at 160px 30px, #ddd, transparent);
+      background-repeat: repeat;
+      background-size: 200px 100px;
+      animation: twinkle 3s ease-in-out infinite alternate;
+      transform: translateZ(-1px) scale(2);
+    }
+
+    .bg-gradient {
+      background: linear-gradient(135deg, 
+        rgba(16, 185, 129, 0.1) 0%,
+        rgba(59, 130, 246, 0.1) 25%,
+        rgba(147, 51, 234, 0.1) 50%,
+        rgba(236, 72, 153, 0.1) 75%,
+        rgba(245, 158, 11, 0.1) 100%);
+      transform: translateZ(-0.5px) scale(1.5);
+    }
+
+    /* Floating Elements */
+    .floating-shapes {
+      position: absolute;
+      width: 100%;
+      height: 200%;
+      pointer-events: none;
+      transform: translateZ(-0.3px) scale(1.3);
+    }
+
+    .shape {
+      position: absolute;
+      border-radius: 50%;
+      background: linear-gradient(45deg, rgba(59, 130, 246, 0.1), rgba(147, 51, 234, 0.1));
+      animation: float 6s ease-in-out infinite;
+    }
+
+    .shape:nth-child(1) { width: 80px; height: 80px; top: 20%; left: 10%; animation-delay: 0s; }
+    .shape:nth-child(2) { width: 120px; height: 120px; top: 60%; left: 80%; animation-delay: 2s; }
+    .shape:nth-child(3) { width: 60px; height: 60px; top: 80%; left: 20%; animation-delay: 4s; }
+    .shape:nth-child(4) { width: 100px; height: 100px; top: 40%; left: 70%; animation-delay: 1s; }
+    .shape:nth-child(5) { width: 90px; height: 90px; top: 10%; left: 60%; animation-delay: 3s; }
+
+    /* Main Content */
+    .content {
+      position: relative;
+      z-index: 1;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 2rem;
       text-align: center;
-      padding: 60px 20px;
     }
-    h1 {
-      color: #004080;
+
+    .hero-section {
+      max-width: 900px;
+      margin-bottom: 4rem;
     }
-    p {
-      font-size: 18px;
-      max-width: 700px;
-      margin: 0 auto 20px;
+
+    .logo {
+      font-size: 3rem;
+      margin-bottom: 2rem;
+      background: linear-gradient(135deg, #10b981, #3b82f6, #8b5cf6);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: glow 2s ease-in-out infinite alternate;
     }
-    .cta {
-      background-color: #007bff;
+
+    .title {
+      font-size: clamp(2.5rem, 5vw, 4rem);
+      font-weight: 800;
+      margin-bottom: 1.5rem;
+      background: linear-gradient(135deg, #ffffff, #e5e7eb);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      line-height: 1.2;
+      animation: slideInUp 0.8s ease-out;
+    }
+
+    .subtitle {
+      font-size: clamp(1.1rem, 2vw, 1.3rem);
+      color: #9ca3af;
+      margin-bottom: 1rem;
+      line-height: 1.6;
+      animation: slideInUp 0.8s ease-out 0.2s backwards;
+    }
+
+    .highlight {
+      font-size: clamp(1rem, 2vw, 1.2rem);
+      color: #10b981;
+      font-weight: 600;
+      margin-bottom: 3rem;
+      animation: slideInUp 0.8s ease-out 0.4s backwards;
+    }
+
+    .cta-button {
+      display: inline-block;
+      padding: 1rem 2.5rem;
+      background: linear-gradient(135deg, #10b981, #059669);
       color: white;
       text-decoration: none;
-      padding: 14px 30px;
-      border-radius: 6px;
-      font-size: 18px;
-      display: inline-block;
-      margin-top: 30px;
+      border-radius: 50px;
+      font-size: 1.1rem;
+      font-weight: 600;
+      position: relative;
+      overflow: hidden;
+      transition: all 0.3s ease;
+      box-shadow: 0 10px 30px rgba(16, 185, 129, 0.3);
+      animation: slideInUp 0.8s ease-out 0.6s backwards;
     }
-    .cta:hover {
-      background-color: #0056b3;
+
+    .cta-button::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+      transition: left 0.5s;
     }
-    .features {
-      margin-top: 40px;
-      text-align: left;
-      max-width: 700px;
-      margin: 40px auto 20px;
+
+    .cta-button:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 15px 40px rgba(16, 185, 129, 0.4);
     }
-    .features li {
-      margin-bottom: 10px;
+
+    .cta-button:hover::before {
+      left: 100%;
+    }
+
+    /* Features Section */
+    .features-section {
+      width: 100%;
+      max-width: 1200px;
+      margin-top: 8rem;
+      padding: 4rem 2rem;
+      background: rgba(255, 255, 255, 0.02);
+      backdrop-filter: blur(10px);
+      border-radius: 20px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      animation: slideInUp 0.8s ease-out 0.8s backwards;
+    }
+
+    .features-title {
+      font-size: 2.5rem;
+      margin-bottom: 3rem;
+      background: linear-gradient(135deg, #ffffff, #10b981);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 2rem;
+      list-style: none;
+    }
+
+    .feature-item {
+      padding: 2rem;
+      background: rgba(255, 255, 255, 0.03);
+      border-radius: 15px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .feature-item::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 2px;
+      background: linear-gradient(90deg, #10b981, #3b82f6, #8b5cf6);
+      transform: translateX(-100%);
+      transition: transform 0.3s ease;
+    }
+
+    .feature-item:hover {
+      transform: translateY(-5px);
+      background: rgba(255, 255, 255, 0.05);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+    }
+
+    .feature-item:hover::before {
+      transform: translateX(0);
+    }
+
+    .feature-icon {
+      font-size: 2rem;
+      margin-bottom: 1rem;
+      display: block;
+    }
+
+    .feature-text {
+      font-size: 1.1rem;
+      color: #e5e7eb;
+      line-height: 1.5;
+    }
+
+    /* Animations */
+    @keyframes twinkle {
+      0% { opacity: 0.3; }
+      100% { opacity: 1; }
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0px) rotate(0deg); }
+      33% { transform: translateY(-20px) rotate(5deg); }
+      66% { transform: translateY(-10px) rotate(-5deg); }
+    }
+
+    @keyframes glow {
+      0% { text-shadow: 0 0 20px rgba(16, 185, 129, 0.5); }
+      100% { text-shadow: 0 0 30px rgba(16, 185, 129, 0.8), 0 0 40px rgba(59, 130, 246, 0.3); }
+    }
+
+    @keyframes slideInUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      .content {
+        padding: 1rem;
+      }
+      
+      .features-section {
+        margin-top: 4rem;
+        padding: 2rem 1rem;
+      }
+      
+      .features-grid {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+      }
+      
+      .feature-item {
+        padding: 1.5rem;
+      }
+    }
+
+    /* Scroll indicator */
+    .scroll-indicator {
+      position: absolute;
+      bottom: 2rem;
+      left: 50%;
+      transform: translateX(-50%);
+      color: rgba(255, 255, 255, 0.6);
+      animation: bounce 2s infinite;
+    }
+
+    @keyframes bounce {
+      0%, 20%, 50%, 80%, 100% { transform: translateX(-50%) translateY(0); }
+      40% { transform: translateX(-50%) translateY(-10px); }
+      60% { transform: translateX(-50%) translateY(-5px); }
     }
   </style>
 </head>
 <body>
+  <div class="parallax-container">
+    <!-- Background Layers -->
+    <div class="bg-layer bg-stars"></div>
+    <div class="bg-layer bg-gradient"></div>
+    
+    <!-- Floating Shapes -->
+    <div class="floating-shapes">
+      <div class="shape"></div>
+      <div class="shape"></div>
+      <div class="shape"></div>
+      <div class="shape"></div>
+      <div class="shape"></div>
+    </div>
 
-  <h1>🚀 Welcome to B2B FinTrack</h1>
+    <!-- Main Content -->
+    <div class="content">
+      <div class="hero-section">
+        <div class="logo">🚀</div>
+        <h1 class="title">Welcome to B2B FinTrack</h1>
+        <p class="subtitle">We're revolutionizing financial management for small and medium businesses with AI-driven insights, expense categorization, and seamless integration.</p>
+        <p class="highlight">Save time, reduce errors, and make smarter financial decisions — all in one digital platform.</p>
+        <a href="mailto:sabrinapengiran@gmail.com" class="cta-button">Join Our Waitlist</a>
+      </div>
 
-  <p>We're revolutionizing financial management for small and medium businesses with AI-driven insights, expense categorization, and seamless integration.</p>
+      <div class="scroll-indicator">
+        <div style="font-size: 1.5rem;">↓</div>
+      </div>
 
-  <p><strong>Save time, reduce errors, and make smarter financial decisions — all in one digital platform.</strong></p>
+      <section class="features-section">
+        <h2 class="features-title">✨ Key Features</h2>
+        <ul class="features-grid">
+          <li class="feature-item">
+            <span class="feature-icon">🔍</span>
+            <div class="feature-text">AI-powered expense categorization that learns and adapts to your business patterns</div>
+          </li>
+          <li class="feature-item">
+            <span class="feature-icon">📊</span>
+            <div class="feature-text">Predictive & visual financial analytics with real-time insights and forecasting</div>
+          </li>
+          <li class="feature-item">
+            <span class="feature-icon">🔗</span>
+            <div class="feature-text">Seamless integration with AWS, CRM, HR tools via robust API connections</div>
+          </li>
+          <li class="feature-item">
+            <span class="feature-icon">☁️</span>
+            <div class="feature-text">Cloud-based, scalable, and secure infrastructure built for modern businesses</div>
+          </li>
+          <li class="feature-item">
+            <span class="feature-icon">📈</span>
+            <div class="feature-text">Freemium model with premium insights & advanced analytical tools</div>
+          </li>
+        </ul>
+      </section>
+    </div>
+  </div>
 
-  <a href="mailto:sabrinapengiran@gmail.com" class="cta">Join Our Waitlist</a>
+  <script>
+    // Enhanced parallax scrolling
+    window.addEventListener('scroll', () => {
+      const scrolled = window.pageYOffset;
+      const rate = scrolled * -0.5;
+      const rate2 = scrolled * -0.3;
+      const rate3 = scrolled * -0.1;
+      
+      document.querySelector('.bg-stars').style.transform = `translateZ(-1px) scale(2) translateY(${rate}px)`;
+      document.querySelector('.bg-gradient').style.transform = `translateZ(-0.5px) scale(1.5) translateY(${rate2}px)`;
+      document.querySelector('.floating-shapes').style.transform = `translateZ(-0.3px) scale(1.3) translateY(${rate3}px)`;
+    });
 
-  <ul class="features">
-    <h2>✨ Key Features</h2>
-    <li>🔍 AI-powered expense categorization</li>
-    <li>📊 Predictive & visual financial analytics</li>
-    <li>🔗 Integration with AWS, CRM, HR tools via API</li>
-    <li>☁️ Cloud-based, scalable, and secure</li>
-    <li>📈 Freemium model with premium insights & tools</li>
-  </ul>
+    // Add subtle mouse movement parallax
+    document.addEventListener('mousemove', (e) => {
+      const mouseX = e.clientX / window.innerWidth;
+      const mouseY = e.clientY / window.innerHeight;
+      
+      document.querySelector('.floating-shapes').style.transform += ` translate(${mouseX * 20}px, ${mouseY * 20}px)`;
+    });
 
+    // Intersection Observer for scroll animations
+    const observerOptions = {
+      threshold: 0.1,
+      rootMargin: '0px 0px -50px 0px'
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.style.animationPlayState = 'running';
+        }
+      });
+    }, observerOptions);
+
+    // Observe feature items for staggered animations
+    document.querySelectorAll('.feature-item').forEach((item, index) => {
+      item.style.animationDelay = `${index * 0.1}s`;
+      observer.observe(item);
+    });
+  </script>
 </body>
 </html>
